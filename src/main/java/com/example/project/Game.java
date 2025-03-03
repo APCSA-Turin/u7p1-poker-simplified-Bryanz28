@@ -22,26 +22,38 @@ public class Game{
 
         } else if(Utility.getHandRanking(p1Hand)==Utility.getHandRanking(p2Hand)){ // if they have the same hand ranking we check high card
 
-            if(Utility.getRankValue(p1.getHand().get(1).getRank())>=Utility.getRankValue(p1.getHand().get(0).getRank())){
-                p1HighCard=Utility.getRankValue(p1.getHand().get(1).getRank());
+            if(Utility.getRankValue(p1.getHand().get(1).getRank())>=Utility.getRankValue(p1.getHand().get(0).getRank())){ //Checking which card is higher in the hand for player 1
+
+                p1HighCard=Utility.getRankValue(p1.getHand().get(1).getRank()); //Set high card to seccond card
+
             } else{
-                p1HighCard=Utility.getRankValue(p1.getHand().get(0).getRank());
+
+                p1HighCard=Utility.getRankValue(p1.getHand().get(0).getRank()); //Set high card to first card
+
             }
 
-            if(Utility.getRankValue(p2.getHand().get(1).getRank())>=Utility.getRankValue(p2.getHand().get(0).getRank())){
-                p2HighCard=Utility.getRankValue(p2.getHand().get(1).getRank());
-            } else{
-                p2HighCard=Utility.getRankValue(p2.getHand().get(0).getRank());
-            }
 
+            if(Utility.getRankValue(p2.getHand().get(1).getRank())>=Utility.getRankValue(p2.getHand().get(0).getRank())){//Checking which card is higher in the hand for player 2
+
+                p2HighCard=Utility.getRankValue(p2.getHand().get(1).getRank());//Set high card to seccond card
+
+            } else{
+
+                p2HighCard=Utility.getRankValue(p2.getHand().get(0).getRank());//Set high card to first card
+
+            }
+             // Checking who has the better HighCard
             if(p1HighCard>p2HighCard){
+
                 return "Player 1 wins!";
+
             } else if (p1HighCard<p2HighCard){
+
                 return "Player 2 wins!";
             }
 
         }
-        return "Tie!";
+        return "Tie!"; //Returns tie if the high card is in community cards
     }
 
     public static void play(){ //simulate card playing
