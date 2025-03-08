@@ -45,7 +45,7 @@ public class Player {
         ArrayList<Integer> suitFrequency = findSuitFrequency();
 
         // Check for Royal Flush or Straight Flush
-        if (isFlush() && isStraight()) {
+        if (isFlush(suitFrequency) && isStraight()) {
             if (allCards.get(allCards.size() - 1).getRank().equals("A")) {
                 return "Royal Flush";
             }
@@ -53,17 +53,17 @@ public class Player {
         }
 
         // Check for Four of a Kind
-        if (rankFrequency.contains(4)) {
+        if (hasFourOfAKind(rankFrequency)) {
             return "Four of a Kind";
         }
 
         // Check for Full House
-        if (rankFrequency.contains(3) && rankFrequency.contains(2)) {
+        if (hasFullHouse(rankFrequency)) {
             return "Full House";
         }
 
         // Check for Flush
-        if (isFlush()) {
+        if (isFlush(suitFrequency)) {
             return "Flush";
         }
 
@@ -73,37 +73,38 @@ public class Player {
         }
 
         // Check for Three of a Kind
-        if (rankFrequency.contains(3)) {
+        if (hasThreeOfAKind(rankFrequency)) {
             return "Three of a Kind";
         }
 
         // Check for Two Pair
-        int pairCount = 0;
-        for (int freq : rankFrequency) {
-            if (freq == 2) {
-                pairCount++;
-            }
-        }
-        if (pairCount == 2) {
+        if (hasTwoPair(rankFrequency)) {
             return "Two Pair";
         }
 
         // Check for One Pair
-        if (pairCount == 1) {
+        if (hasOnePair(rankFrequency)) {
             return "A Pair";
         }
 
         // Determine the highest card and its location
-    Card highestCard = allCards.get(allCards.size() - 1); // The highest card in allCards
-    if (hand.contains(highestCard)) { // Check if the highest card is in the player's hand
-        return "High Card";
-    } else { // Otherwise, the highest card is in the community cards
-        return "Nothing";
-    }
+        Card highestCard = allCards.get(allCards.size() - 1); // The highest card in allCards
+        boolean isHighestInHand = false;
+        for (Card c : hand) {
+            if (c.equals(highestCard)) {
+                isHighestInHand = true;
+                break;
+            }
+        }
+        if (isHighestInHand) { // Check if the highest card is in the player's hand
+            return "High Card";
+        } else { // Otherwise, the highest card is in the community cards
+            return "Nothing";
+        }
     }
 
-     // Uses selection sort to sort allCards by rank
-     public void sortAllCards() {
+    // Uses selection sort to sort allCards by rank
+    public void sortAllCards() {
         for (int i = 1; i < allCards.size(); i++) { // Loop through the cards
             int idx = i - 1; // Start comparing from the previous card
             while (idx >= 0 && Utility.getRankValue(allCards.get(idx + 1).getRank()) < Utility.getRankValue(allCards.get(idx).getRank())) {
@@ -116,8 +117,8 @@ public class Player {
         }
     }
 
-     // Calculates the frequency of each rank in allCards
-     public ArrayList<Integer> findRankingFrequency() {
+    // Calculates the frequency of each rank in allCards
+    public ArrayList<Integer> findRankingFrequency() {
         List<String> rankOrder = Arrays.asList(Utility.getRanks()); // Standard rank order
         ArrayList<Integer> frequency = new ArrayList<>();
         for (int i = 0; i < rankOrder.size(); i++) { // Initialize frequency counts
@@ -144,9 +145,9 @@ public class Player {
         return frequency;
     }
 
-     // Helper method: Checks if the hand has a Flush (5 cards of the same suit)
-     private boolean isFlush() {
-        for (int freq : findSuitFrequency()) { // Check for any suit frequency >= 5
+    // Helper method: Checks if the hand has a Flush (5 cards of the same suit)
+    private boolean isFlush(ArrayList<Integer> suitFrequency) {
+        for (int freq : suitFrequency) { // Check for any suit frequency >= 5
             if (freq >= 5) return true;
         }
         return false;
@@ -181,6 +182,51 @@ public class Player {
             }
         }
         return false; // No straight found
+    }
+
+    // Check if the hand has Four of a Kind
+    private boolean hasFourOfAKind(ArrayList<Integer> rankFrequency) {
+        for (int freq : rankFrequency) {
+            if (freq == 4) return true;
+        }
+        return false;
+    }
+
+    // Check if the hand has a Full House
+    private boolean hasFullHouse(ArrayList<Integer> rankFrequency) {
+        boolean hasThree = false;
+        boolean hasTwo = false;
+        for (int freq : rankFrequency) {
+            if (freq == 3) hasThree = true;
+            if (freq == 2) hasTwo = true;
+        }
+        return hasThree && hasTwo;
+    }
+
+    // Check if the hand has Three of a Kind
+    private boolean hasThreeOfAKind(ArrayList<Integer> rankFrequency) {
+        for (int freq : rankFrequency) {
+            if (freq == 3) return true;
+        }
+        return false;
+    }
+
+    // Check if the hand has Two Pair
+    private boolean hasTwoPair(ArrayList<Integer> rankFrequency) {
+        int pairCount = 0;
+        for (int freq : rankFrequency) {
+            if (freq == 2) pairCount++;
+        }
+        return pairCount == 2;
+    }
+
+    // Check if the hand has One Pair
+    private boolean hasOnePair(ArrayList<Integer> rankFrequency) {
+        int pairCount = 0;
+        for (int freq : rankFrequency) {
+            if (freq == 2) pairCount++;
+        }
+        return pairCount == 1;
     }
 
     // Converts the player's hand to a string representation
